@@ -9,6 +9,7 @@
 use std::{collections::HashMap, str::Utf8Error};
 
 use ops::{Dim, Id, Op};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 mod ops;
@@ -30,7 +31,7 @@ pub enum Error {
 pub type SpirvResult<T> = ::std::result::Result<T, Error>;
 
 /// Stores the reflection info of a single SPIRV module.
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Module {
     types: HashMap<u32, Type>,
     entry_points: Vec<EntryPoint>,
@@ -39,7 +40,7 @@ pub struct Module {
 /// Describes a single `EntryPoint` in a SPIR-V module.
 ///
 /// A SPIR-V module can have multiple entry points with different names, each defining a single shader.
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct EntryPoint {
     /// The name of the entry point, used for identification
     pub name: String,
@@ -588,7 +589,7 @@ impl Module {
 /// Represents a type declared in a SPIRV module.
 ///
 /// Types are declared in a hierarchy, with e.g. pointers relying on previously declared types as pointed-to types.
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum Type {
     /// An unsupported type
@@ -652,7 +653,7 @@ pub enum Type {
 }
 
 /// Describes a single member of a [`Type::Struct`] type
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct StructMember {
     /// The name of the member variable (if known)
     pub name: Option<String>,
@@ -667,7 +668,7 @@ pub struct StructMember {
 }
 
 /// Describes what type of storage a pointer points to
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum StorageClass {
     Unknown,
@@ -684,7 +685,7 @@ pub enum StorageClass {
 }
 
 /// The execution model of an [`EntryPoint`].
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum ExecutionModel {
     /// A Vertex Shader
@@ -710,7 +711,7 @@ struct RawEntryPoint {
 }
 
 /// Describes a uniform variable declared in a SPIRV module
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct UniformVariable {
     /// Which DescriptorSet the variable is contained in (if known)
     pub set: u32,
@@ -723,7 +724,7 @@ pub struct UniformVariable {
 }
 
 /// Describes a push constant variable declared in a SPIRV module
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct PushConstantVariable {
     /// The type id of the variable's [`Type`]
     pub type_id: u32,
@@ -732,7 +733,7 @@ pub struct PushConstantVariable {
 }
 
 /// Describes an input or output variable declared in a SPIRV module
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct LocationVariable {
     /// The location of the variable (e.g. GLSL `layout(location=XXX)`)
     pub location: u32,
