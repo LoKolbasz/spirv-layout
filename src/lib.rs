@@ -413,12 +413,11 @@ impl Module {
                 } => {
                     let t = types
                         .get(&column_type.0)
-                        .map(|column_type| match column_type {
+                        .map_or(Type::Unknown, |column_type| match column_type {
                             Type::Vec3 if *column_count == 3 => Type::Mat3,
                             Type::Vec4 if *column_count == 4 => Type::Mat4,
                             _ => Type::Unknown,
-                        })
-                        .unwrap_or(Type::Unknown);
+                        });
                     types.insert(result.0, t);
                 }
                 Op::OpTypeImage {
@@ -625,9 +624,9 @@ pub enum Type {
     },
     /// An opaque sampler object
     Sampler,
-    /// A combined image and sampler (Vulkan: CombinedImageSampler descriptor)
+    /// A combined image and sampler (Vulkan: `CombinedImageSampler` descriptor)
     SampledImage {
-        /// type id of the image contained in the SampledImage
+        /// type id of the image contained in the `SampledImage`
         image_type_id: u32,
     },
     /// Either a static array with known length (`length` is [`Some`]) or dynamic array with unknown length (`length` is [`None`])
@@ -713,9 +712,9 @@ struct RawEntryPoint {
 /// Describes a uniform variable declared in a SPIRV module
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct UniformVariable {
-    /// Which DescriptorSet the variable is contained in (if known)
+    /// Which `DescriptorSet` the variable is contained in (if known)
     pub set: u32,
-    /// Which DescriptorSet binding the variable is contained in (if known)
+    /// Which `DescriptorSet` binding the variable is contained in (if known)
     pub binding: u32,
     /// The type id of the variable's [`Type`]
     pub type_id: u32,

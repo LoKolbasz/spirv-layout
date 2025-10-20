@@ -133,7 +133,7 @@ impl DecodeArg for String {
 
         if stream.iter().any(|e| {
             num_words += 1;
-            e.to_le_bytes().iter().any(|b| *b == 0)
+            e.to_le_bytes().contains(&0)
         }) {
             let arg = unsafe { CStr::from_ptr(stream.as_ptr().cast::<i8>()) }
                 .to_str()?
